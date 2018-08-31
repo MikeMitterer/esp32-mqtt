@@ -7,3 +7,5 @@ bin
 cmake-build-debug
 lib
 .travis.yml
+.config/passwords.cmake
+src/config.h
