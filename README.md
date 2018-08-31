@@ -22,4 +22,17 @@ Mosquite wird nach `/usr/local/Cellar/mosquitto/1.5.1/sbin/mosquitto` installier
     # Start
     /usr/local/Cellar/mosquitto/1.5.1/sbin/mosquitto -c /usr/local/etc/mosquitto/mosquitto.conf
     
+### Testing
+
+    # Turn on led
+    mosquitto_pub -t "esp32/output" -m "on"
     
+    # Turn off led
+    mosquitto_pub -t "esp32/output" -m "off"    
+    
+## Links
+
+   - [PlatformIO - PubSubClient for ESP32 / Arduino](https://platformio.org/lib/show/89/PubSubClient)
+   - [Some samples](https://www.hivemq.com/blog/mqtt-client-library-encyclopedia-arduino-pubsubclient/)
+   - [ESP32 MQTT – Publish and Subscribe with Arduino IDE](https://randomnerdtutorials.com/esp32-mqtt-publish-subscribe-arduino-ide/)
+       
