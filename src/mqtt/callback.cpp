@@ -6,6 +6,13 @@
 #include "callback.h"
 #include "hardware.h"
 
+/**
+ * Called if a message comes in
+ * 
+ * @param topic Something like "esp32/output"
+ * @param message e.g. "on" or "off"
+ * @param length length of message
+ */
 void mqtt_callback(char* topic, uint8_t* message, unsigned int length) {
     Serial.print("Message arrived on topic: ");
     Serial.print(topic);
@@ -34,6 +41,19 @@ void mqtt_callback(char* topic, uint8_t* message, unsigned int length) {
     }
 }
 
+/**
+ * Wird in der "loop" aufgerufen und verbindet sich automatisch mit dem
+ * MQTT-Server
+ *
+ * void loop() {
+ *      if (!mqttClient.connected()) {
+ *          mqtt_reconnect(mqttClient);
+ *      }
+ *      mqttClient.loop();
+ * }
+ *
+ * @param client
+ */
 void mqtt_reconnect(PubSubClient& client) {
     // Loop until we're reconnected
     while (!client.connected()) {
