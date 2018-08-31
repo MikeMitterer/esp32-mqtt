@@ -1,0 +1,22 @@
+name: uws_sample
+
+version: 0.2.1
+author: Mike Mitterer <office@mikemitterer.at>
+description: Sample for using uWS with Dart
+homepage: https://github.com/MikeMitterer/cmake-dart-extension-master
+
+# Add the bin/drandom.dart script to the scripts pub installs.
+# Activate local repo:
+#   pub global activate --source path .
+#
+executables:
+  random:
+
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+
+dependencies:
+  logging: '>=0.11.3 <1.0.0'
+
+  #websockets: "^0.2.1+1"
+
