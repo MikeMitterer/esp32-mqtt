@@ -102,11 +102,11 @@ void setup() {
 
     display.clear();
     delay(10);
-    display.drawString(0, 0,  String("IP:  ") + WiFi.localIP().toString());
-    display.drawString(0, 11, String("MAC: ") + WiFi.macAddress());
-    display.drawString(0, 22, String("App: ") +
+    display.drawString(0, 0,  String("App: ") +
                               String(PROJECT_NAME.c_str()) + " / " +
                               String(PROJECT_VERSION.c_str()));
+    display.drawString(0, 11, String("IP:  ") + WiFi.localIP().toString());
+    display.drawString(0, 22, String("MAC: ") + WiFi.macAddress());
     display.display();
 
     mqttClient.setServer(mqtt_server, 1883);
