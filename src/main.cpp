@@ -32,18 +32,14 @@
 #include "SSD1306.h"
 #include <ArduinoJson.h>
 #include <PubSubClient.h>
+#include <OneButton.h>
 
 using namespace std::placeholders;
 
-const std::string ssid{ MQTT_SSID };            // NOLINT(cert-err58-cpp)
-const std::string password{ MQTT_PASSWORD };    // NOLINT(cert-err58-cpp)
+const std::string ssid{ PROJECT_SSID };            // NOLINT(cert-err58-cpp)
+const std::string password{ PROJECT_PASSWORD };    // NOLINT(cert-err58-cpp)
 
 static const uint8_t MAX_RETRIES = 80;
-
-// OLED
-const uint8_t SDA_PIN = 21;
-const uint8_t SCL_PIN = 22;
-const uint8_t OLED_ADDRESS = 0x3c;
 
 SSD1306 display(OLED_ADDRESS, SDA_PIN, SCL_PIN);                         // NOLINT(cert-err58-cpp)
 
@@ -51,6 +47,9 @@ const char* mqtt_server = "192.168.0.42";
 
 WiFiClient wiFiClient;                                                     // NOLINT(cert-err58-cpp)
 PubSubClient mqttClient(wiFiClient);                                       // NOLINT(cert-err58-cpp)
+
+// Buttons
+OneButton mainSwitch(pinMainSwitch, false);                                // NOLINT(cert-err58-cpp)
 
 void setup() {
     Serial.begin(115200);
@@ -62,8 +61,11 @@ void setup() {
     display.clear();
 
     // initialize digital pin LED_BUILTIN as an output.
-    pinMode(internalLED, OUTPUT);
-    pinMode(testLED, OUTPUT);
+    pinMode(pinInternalLED, OUTPUT);
+
+    pinMode(pinTestLED, OUTPUT);
+
+    pinMode(pinMainSwitch, INPUT_PULLDOWN);
 
     WiFi.begin(ssid.c_str(), password.c_str());
     Serial.print("\nBooting ");
@@ -74,9 +76,9 @@ void setup() {
     int retry = 0;
     WiFiClass::mode(WIFI_STA);
     while (WiFiClass::status() != WL_CONNECTED && retry < MAX_RETRIES) {
-        digitalWrite(internalLED, HIGH);
+        digitalWrite(pinInternalLED, HIGH);
         delay(100);
-        digitalWrite(internalLED, LOW);
+        digitalWrite(pinInternalLED, LOW);
         Serial.print(".");
         retry++;
     }
@@ -94,18 +96,33 @@ void setup() {
         ESP.restart();
     }
 
-    digitalWrite(internalLED, HIGH);
+    digitalWrite(pinInternalLED, HIGH);
     Serial.print("IP: ");
     Serial.println(WiFi.localIP());
 
     display.clear();
     delay(10);
-    display.drawString(0, 0, String("IP:  ") + WiFi.localIP().toString());
+    display.drawString(0, 0,  String("IP:  ") + WiFi.localIP().toString());
     display.drawString(0, 11, String("MAC: ") + WiFi.macAddress());
+    display.drawString(0, 22, String("App: ") +
+                              String(PROJECT_NAME.c_str()) + " / " +
+                              String(PROJECT_VERSION.c_str()));
     display.display();
 
     mqttClient.setServer(mqtt_server, 1883);
     mqttClient.setCallback(mqtt_callback);
+
+    // Buttons
+    mainSwitch.setPressTicks(50);
+    mainSwitch.attachDuringLongPress([]() {
+        Serial.println("Button pressed");
+        mqttClient.publish("esp32/push","on");
+    });
+
+    mainSwitch.attachLongPressStop([](){
+        Serial.println("Button released");
+        mqttClient.publish("esp32/push","off");
+    });
 
     initOTA();
     ArduinoOTA.begin();
@@ -120,6 +137,7 @@ void loop() {
         mqtt_reconnect(mqttClient);
     }
     mqttClient.loop();
+    mainSwitch.tick();
 
     // Wird z.B. von digitalWrite benötigt - sonst geht die LED nicht an???
     delay(1);

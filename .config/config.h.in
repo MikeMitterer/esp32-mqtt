@@ -10,12 +10,14 @@
 #include <string>
 
 // the configured options and settings for HelloWorld
-const std::string MQTT_VERSION_MAJOR = "@MQTT_VERSION_MAJOR@";
-const std::string MQTT_VERSION_MINOR = "@MQTT_VERSION_MINOR@";
+const std::string PROJECT_NAME          = "@PROJECT_NAME@";
+const std::string PROJECT_VERSION       = "@MQTT_VERSION_MAJOR@.@MQTT_VERSION_MINOR@";
+const std::string PROJECT_VERSION_MAJOR = "@MQTT_VERSION_MAJOR@";
+const std::string PROJECT_VERSION_MINOR = "@MQTT_VERSION_MINOR@";
 
 // Password compiled into source
 // Set in .config/passwords.cmake (or via ENV-VAR)
-const char* MQTT_SSID = "@MQTT_SSID@";
-const char* MQTT_PASSWORD = "@MQTT_PASSWORD@";
+const char* PROJECT_SSID     = "@MQTT_SSID@";
+const char* PROJECT_PASSWORD = "@MQTT_PASSWORD@";
 
 #endif //XCTEST_CONFIG_H_IN_H

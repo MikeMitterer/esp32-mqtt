@@ -33,10 +33,19 @@ void mqtt_callback(char* topic, uint8_t* message, unsigned int length) {
         Serial.print("Changing output to ");
         if (messageTemp == "on") {
             Serial.println("on");
-            digitalWrite(testLED, HIGH);
+            digitalWrite(pinTestLED, HIGH);
         } else if (messageTemp == "off") {
             Serial.println("off");
-            digitalWrite(testLED, LOW);
+            digitalWrite(pinTestLED, LOW);
+        }
+    } else if(String(topic) == "esp32/push") {
+        Serial.print("Button pressed with state");
+        if (messageTemp == "on") {
+            Serial.println("on");
+            digitalWrite(pinTestLED, HIGH);
+        } else if (messageTemp == "off") {
+            Serial.println("off");
+            digitalWrite(pinTestLED, LOW);
         }
     }
 }
@@ -61,8 +70,10 @@ void mqtt_reconnect(PubSubClient& client) {
         // Attempt to connect
         if (client.connect("esp32client")) {
             Serial.println("connected");
+
             // Subscribe
             client.subscribe("esp32/output");
+            client.subscribe("esp32/push");
         } else {
             Serial.print("failed, rc=");
             Serial.print(client.state());
